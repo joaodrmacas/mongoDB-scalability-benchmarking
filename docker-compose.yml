@@ -5,52 +5,37 @@ x-mongo-env: &mongo-env
     - MONGO_INITDB_ROOT_PASSWORD=password
 
 services:
-  mongo1:
+  mongo_manager:
     image: mongo:6.0
-    command: "--replSet rs0 --keyFile /keys/mongodb/mongo-keyfile"
+    command: "--replSet rs0" # --keyFile /keys/mongodb/mongo-keyfile"
     networks:
       - mongo-network
     volumes:
-      - mongo1-data:/data/db
+      - mongo_manager:/data/db
       - ./keys/mongodb:/keys/mongodb
-    <<: *mongo-env
+    # <<: *mongo-env
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
+      # placement:
+      #   constraints:
+      #     - node.role == manager
     ports:
       - "27017:27017"
 
-  mongo2:
+  mongo_worker:
     image: mongo:6.0
-    command: "--replSet rs0 --keyFile /keys/mongodb/mongo-keyfile"
+    command: "--replSet rs0" # --keyFile /keys/mongodb/mongo-keyfile"
     networks:
       - mongo-network
     volumes:
-      - mongo2-data:/data/db
+      - mongo_worker-data:/data/db
       - ./keys/mongodb:/keys/mongodb
-    <<: *mongo-env
+    # <<: *mongo-env
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.role == worker
-
-  mongo3:
-    image: mongo:6.0
-    command: "--replSet rs0 --keyFile /keys/mongodb/mongo-keyfile"
-    networks:
-      - mongo-network
-    volumes:
-      - mongo3-data:/data/db
-      - ./keys/mongodb:/keys/mongodb
-    <<: *mongo-env
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == worker
+      # placement:
+      #   constraints:
+      #     - node.role == worker
 
 networks:
   mongo-network:
@@ -58,6 +43,5 @@ networks:
     attachable: true
 
 volumes:
-  mongo1-data:
-  mongo2-data:
-  mongo3-data:
+  mongo_manager:
+  mongo_worker-data:

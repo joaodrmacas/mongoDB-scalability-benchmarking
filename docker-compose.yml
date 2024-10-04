@@ -1,0 +1,63 @@
+
+x-mongo-env: &mongo-env
+  environment:
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=password
+
+services:
+  mongo1:
+    image: mongo:6.0
+    command: "--replSet rs0 --keyFile /keys/mongodb/mongo-keyfile"
+    networks:
+      - mongo-network
+    volumes:
+      - mongo1-data:/data/db
+      - ./keys/mongodb:/keys/mongodb
+    <<: *mongo-env
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - "27017:27017"
+
+  mongo2:
+    image: mongo:6.0
+    command: "--replSet rs0 --keyFile /keys/mongodb/mongo-keyfile"
+    networks:
+      - mongo-network
+    volumes:
+      - mongo2-data:/data/db
+      - ./keys/mongodb:/keys/mongodb
+    <<: *mongo-env
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  mongo3:
+    image: mongo:6.0
+    command: "--replSet rs0 --keyFile /keys/mongodb/mongo-keyfile"
+    networks:
+      - mongo-network
+    volumes:
+      - mongo3-data:/data/db
+      - ./keys/mongodb:/keys/mongodb
+    <<: *mongo-env
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+networks:
+  mongo-network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:

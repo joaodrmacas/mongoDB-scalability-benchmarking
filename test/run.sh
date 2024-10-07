@@ -1,0 +1,1 @@
+docker compose -f client-compose.yml up

@@ -13,7 +13,7 @@ const csvFilePath = 'results.csv';
 
 const steps = [50000, 90000, 130000, 170000, 210000, 250000, 290000, 330000, 370000, 410000];
 
-async function runTestStep(step, workers, multipleRouters) {
+async function runTestStep(step, workers, shardCount, multipleRouters) {
   const reqPerMin = step;
   const reqPerWorker = reqPerMin / workers;
   const requestsPerSecond = reqPerWorker / 60;

@@ -1,47 +1,108 @@
-
-x-mongo-env: &mongo-env
-  environment:
-    - MONGO_INITDB_ROOT_USERNAME=root
-    - MONGO_INITDB_ROOT_PASSWORD=password
+version: '3.8'
 
 services:
-  mongo_manager:
+  mongo_cfg:
     image: mongo:6.0
-    command: "--replSet rs0" # --keyFile /keys/mongodb/mongo-keyfile"
-    networks:
-      - mongo-network
+    container_name: mongo_cfg
+    command: --replSet cfgReplSet --configsvr --port 27017
     volumes:
-      - mongo_manager:/data/db
-      - ./keys/mongodb:/keys/mongodb
-    # <<: *mongo-env
-    deploy:
-      replicas: 1
-      # placement:
-      #   constraints:
-      #     - node.role == manager
+      - cfgdata:/data/db
+    networks:
+      - mongo_cluster
     ports:
-      - "27017:27017"
-
-  mongo_worker:
-    image: mongo:6.0
-    command: "--replSet rs0" # --keyFile /keys/mongodb/mongo-keyfile"
-    networks:
-      - mongo-network
-    volumes:
-      - mongo_worker-data:/data/db
-      - ./keys/mongodb:/keys/mongodb
-    # <<: *mongo-env
+      - 27019:27017
     deploy:
-      replicas: 1
-      # placement:
-      #   constraints:
-      #     - node.role == worker
+      resources:
+        limits:
+          cpus: "1"
 
-networks:
-  mongo-network:
-    driver: overlay
-    attachable: true
+  mongo_shard1:
+    image: mongo:6.0
+    container_name: mongo_shard1
+    command: --replSet shard1ReplSet --shardsvr --port 27017
+    volumes:
+      - shard1data:/data/db
+    networks:
+      - mongo_cluster
+    ports:
+      - 27020:27017
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+
+  mongo_shard2:
+    image: mongo:6.0
+    container_name: mongo_shard2
+    command: --replSet shard2ReplSet --shardsvr --port 27017
+    volumes:
+      - shard2data:/data/db
+    networks:
+      - mongo_cluster
+    ports:
+      - 27021:27017
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+
+  mongo_shard3:
+    image: mongo:6.0
+    container_name: mongo_shard3
+    command: --replSet shard3ReplSet --shardsvr --port 27017
+    volumes:
+      - shard3data:/data/db
+    networks:
+      - mongo_cluster
+    ports:
+      - 27022:27017
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+
+  mongo_mongos:
+    image: mongo:6.0
+    container_name: mongo_mongos
+    command: mongos --configdb cfgReplSet/mongo_cfg:27017 --port 27017 --bind_ip_all
+    networks:
+      - mongo_cluster
+    ports:
+      - 27018:27017
+    depends_on:
+      - mongo_cfg
+      - mongo_shard1
+      - mongo_shard2
+      - mongo_shard3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+
+  mongo_mongos2:
+    image: mongo:6.0
+    container_name: mongo_mongos2
+    command: mongos --configdb cfgReplSet/mongo_cfg:27017 --port 27017 --bind_ip_all
+    networks:
+      - mongo_cluster
+    ports:
+      - 27023:27017
+    depends_on:
+      - mongo_cfg
+      - mongo_shard1
+      - mongo_shard2
+      - mongo_shard3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
 
 volumes:
-  mongo_manager:
-  mongo_worker-data:
+  cfgdata:
+  shard1data:
+  shard2data:
+  shard3data:
+
+networks:
+  mongo_cluster:
+    driver: bridge

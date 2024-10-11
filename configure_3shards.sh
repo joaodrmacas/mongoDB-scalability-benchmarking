@@ -16,7 +16,7 @@ sh.shardCollection("test_db.coll", { workerId: 1 });
 sh.addShardTag("shard1ReplSet", "zone1");
 sh.addShardTag("shard2ReplSet", "zone2");
 sh.addShardTag("shard3ReplSet", "zone3");
-db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: MinKey() }, max: { workerId: 3 }, zone: "zone1"});
-db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 3 }, max: { workerId: 6 }, zone: "zone2"});
-db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 6 }, max: { workerId: MaxKey() }, zone: "zone3"});
+db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: MinKey() }, max: { workerId: 1 }, zone: "zone1"});
+db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 1 }, max: { workerId: 2 }, zone: "zone2"});
+db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 2 }, max: { workerId: MaxKey() }, zone: "zone3"});
 '

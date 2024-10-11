@@ -1,7 +1,7 @@
 # Project ESLE G7
 António Oliveira: antonio.koch@tecnico.ulisboa.pt, Student Number: 104010 \
 João Maçãs: joaomacas02@tecnico.ulisboa.pt, Student Number: 99970 \
-Miguel Parece: miguelparece@tecnico.ulisboa.pt, Student Number: 103369 \
+Miguel Parece: miguelparece@tecnico.ulisboa.pt, Student Number: 103369
 
 ## Project choice:
 [MongoDB](https://www.mongodb.com/) is a source-available, cross-platform, document-oriented database program. Classified as a NoSQL database product, MongoDB utilizes JSON-like documents with optional schemas. MongoDB is developed by MongoDB Inc. and current versions are licensed under the Server Side Public License (SSPL). MongoDB is a member of the MACH Alliance. 

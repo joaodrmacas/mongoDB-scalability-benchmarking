@@ -33,7 +33,7 @@ docker compose -f docker-compose.yml up --detach
 ./configure_topology.sh
 ```
 
-3. Run the client. The args have the following format
+3. Run the client (**template**). The args have the following format
 ```
 # docker run -it --network host `clientImage` node client.js `numShards` `routerConfig`
 ```

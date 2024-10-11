@@ -47,3 +47,10 @@ Here an example
 docker run -it --network host client_100w node client.js 3 -r1
 ```
 Which tests mongodb with `3 shards` and `1 router` using the client `client_100w`
+
+## View Results
+
+The results of the client are printed to the terminal but are also stored as a `.csv` file insid the client container. After the client exited you can run the following command to obtain the csv file.
+```
+docker cp {client_container_name}:/app/results.csv {dest_folder}
+```

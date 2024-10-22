@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-cfg
+spec:
+  serviceName: "mongo-cfg"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-cfg
+  template:
+    metadata:
+      labels:
+        app: mongo-cfg
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:6.0
+          command: ["mongod", "--replSet", "cfgReplSet", "--configsvr", "--port", "27017", "--bind_ip_all"]
+          volumeMounts:
+            - name: cfg-storage
+              mountPath: /data/db  # Mounting the volume at the specified path
+      volumes:
+        - name: cfg-storage
+          emptyDir: {}  # Using an emptyDir for ephemeral storage

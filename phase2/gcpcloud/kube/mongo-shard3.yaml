@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-shard3
+spec:
+  serviceName: "mongo-shard3"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-shard3
+  template:
+    metadata:
+      labels:
+        app: mongo-shard3
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:6.0
+          command: ["mongod", "--replSet", "shard3ReplSet", "--shardsvr", "--port", "27017", "--bind_ip_all"]
+          volumeMounts:
+            - name: shard3-storage
+              mountPath: /data/db  # Mounting the volume at the specified path
+      volumes:
+        - name: shard3-storage
+          emptyDir: {}  # Using an emptyDir for ephemeral storage

@@ -1,0 +1,53 @@
+---
+- hosts: "master"
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+
+  tasks:
+    # Task to install Docker
+    - name: Install dependencies for Docker
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+        update_cache: yes
+
+    - name: Install Docker CE
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: yes
+
+    - name: Ensure Docker service is enabled and running
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    # Task to copy a specific folder from the Ansible host to the VMs
+    - name: Copy specific folder from host to VM
+      copy:
+        src: "/home/vagrant/labs/agisit24-g37/"  # Change this to the path on your Ansible host
+        dest: "/home/ubuntu/app"  # Change this to the desired path on the target VM
+        mode: '0755'
+        owner: root
+        group: root
+        recurse: yes

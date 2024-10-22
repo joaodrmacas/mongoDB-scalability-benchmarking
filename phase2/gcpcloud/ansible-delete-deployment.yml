@@ -1,0 +1,15 @@
+---
+- hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Delete Kubernetes configurations
+      command: kubectl delete -f /home/ubuntu/{{ item }}  # Adjust the path to where your YAML files are
+      loop:
+        - mongo-cfg.yaml
+        - mongo-mongos.yaml
+        - mongo-services.yaml
+        - mongo-shard1.yaml
+        - mongo-shard2.yaml
+        - mongo-shard3.yaml

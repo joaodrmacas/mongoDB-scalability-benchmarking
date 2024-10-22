@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Get the names of the pods
+MONGO_CFG_POD=$(sudo kubectl get pods -l app=mongo-cfg -o jsonpath='{.items[0].metadata.name}')
+MONGO_MONGOS_POD=$(sudo kubectl get pods -l app=mongo-mongos -o jsonpath='{.items[0].metadata.name}')
+MONGO_SHARD1_POD=$(sudo kubectl get pods -l app=mongo-shard1 -o jsonpath='{.items[0].metadata.name}')
+MONGO_SHARD2_POD=$(sudo kubectl get pods -l app=mongo-shard2 -o jsonpath='{.items[0].metadata.name}')
+MONGO_SHARD3_POD=$(sudo kubectl get pods -l app=mongo-shard3 -o jsonpath='{.items[0].metadata.name}')
+
+
+
+# Configure the config server
+echo "Configuring the config server..."
+sudo kubectl exec -it "$MONGO_CFG_POD" -- mongosh --eval 'rs.initiate({ _id: "cfgReplSet", configsvr: true, members: [{ _id: 0, host: "mongo-cfg-0.mongo-cfg:27017" }]})'
+
+# Configure the shards
+echo "Configuring shard 1..."
+sudo kubectl exec -it "$MONGO_SHARD1_POD" -- mongosh --eval 'rs.initiate({ _id: "shard1ReplSet", members: [{ _id: 0, host: "mongo-shard1-0.mongo-shard1:27017" }] })'
+
+echo "Configuring shard 2..."
+sudo kubectl exec -it "$MONGO_SHARD2_POD" -- mongosh --eval 'rs.initiate({ _id: "shard2ReplSet", members: [{ _id: 0, host: "mongo-shard2-0.mongo-shard2:27017" }] })'
+
+echo "Configuring shard 3..."
+sudo kubectl exec -it "$MONGO_SHARD3_POD" -- mongosh --eval 'rs.initiate({ _id: "shard3ReplSet", members: [{ _id: 0, host: "mongo-shard3-0.mongo-shard3:27017" }] })'
+
+# Configure the topology
+echo "Configuring the topology..."
+sudo kubectl exec -it "$MONGO_MONGOS_POD" -- mongosh --eval 'sh.addShard("shard1ReplSet/mongo-shard1-0.mongo-shard1:27017"); sh.addShard("shard2ReplSet/mongo-shard2-0.mongo-shard2:27017"); sh.addShard("shard3ReplSet/mongo-shard3-0.mongo-shard3:27017");'
+
+# Configure the db & sharding
+echo "Setting up the database and sharding..."
+sudo kubectl exec -it "$MONGO_MONGOS_POD" -- mongosh test_db --eval '
+db.createCollection("coll");
+db.coll.createIndex({ workerId: 1 });
+sh.shardCollection("test_db.coll", { workerId: 1 });
+sh.addShardTag("shard1ReplSet", "zone1");
+sh.addShardTag("shard2ReplSet", "zone2");
+sh.addShardTag("shard3ReplSet", "zone3");
+db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: MinKey() }, max: { workerId: 1 }, zone: "zone1"});
+db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 1 }, max: { workerId: 2 }, zone: "zone2"});
+db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 2 }, max: { workerId: MaxKey() }, zone: "zone3"});
+'
+
+echo "Setup completed."

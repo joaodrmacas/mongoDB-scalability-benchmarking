@@ -54,3 +54,16 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-test-client-service
+spec:
+  type: ClusterIP  # Use ClusterIP for internal communication, change to NodePort or LoadBalancer if needed
+  selector:
+    app: mongo-test-client
+  ports:
+    - protocol: TCP
+      port: 8080          # Port exposed by the service
+      targetPort: 8080  # Port on which the container is listening

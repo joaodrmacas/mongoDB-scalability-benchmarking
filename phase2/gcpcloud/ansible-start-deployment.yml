@@ -26,6 +26,7 @@
         - mongo-shard1.yaml
         - mongo-shard2.yaml
         - mongo-shard3.yaml
+        - mongo-test-client.yaml
 
     - name: Copy the topology script to the master
       copy:
@@ -42,6 +43,7 @@
         - mongo-shard2.yaml
         - mongo-shard3.yaml
         - mongo-mongos.yaml
+        - mongo-test-client.yaml
 
     - name: Run the setup script
       command: ./configure_topology.sh

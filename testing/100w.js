@@ -4,8 +4,7 @@ const fs = require('fs');
 
 // The url of the routers are normally comma seperated so that the clients choose one randomly/based on some criteria
 // but for testing we want to choose the router in a deterministic way
-const url  = 'mongodb://127.0.0.1:27018/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.1';
-const url2 = 'mongodb://127.0.0.1:27023/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.1';
+const url = 'mongodb://mongo-mongos:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.1';
 
 const dbName = 'test_db';
 const collName = 'coll';
@@ -13,7 +12,7 @@ const csvFilePath = 'results.csv';
 
 const steps = [50000, 90000, 130000, 170000, 210000, 250000, 290000, 330000, 370000, 410000];
 
-async function runTestStep(step, workers, shardCount, multipleRouters) {
+async function runTestStep(step, workers, shardCount) {
   const reqPerMin = step;
   const reqPerWorker = reqPerMin / workers;
   const requestsPerSecond = reqPerWorker / 60;
@@ -25,10 +24,10 @@ async function runTestStep(step, workers, shardCount, multipleRouters) {
   const totalRequestsArray = Array(workers).fill(0);
 
   await async.times(workers, async (workerId) => {
-    const client = await MongoClient.connect(((workerId % 2) && multipleRouters) ? url2 : url);
+    const client = await MongoClient.connect(url);
     const db = client.db(dbName);
     const collection = db.collection(collName);
-  
+
     const workerStartTime = Date.now();
 
     let shardSelector = 0;
@@ -43,22 +42,13 @@ async function runTestStep(step, workers, shardCount, multipleRouters) {
 
         shardSelector %= shardCount;
 
-        if (i % 4 == 0) {
-          promise = collection.insertOne({ workerId: shardSelector++, data: `random data $( Math.random() )`})
+        const promise = collection.insertOne({ workerId: shardSelector++, data: `random data $( Math.random() )` })
           .then(() => {
             const requestLatency = Date.now() - requestStart;
             totalLatencyArray[workerId] += requestLatency;
             totalRequestsArray[workerId]++;
           });
-        } else {
-          promise = collection.insertOne({ workerId: shardSelector++, data: `random data $( Math.random() )`})
-          .then(() => {
-            const requestLatency = Date.now() - requestStart;
-            totalLatencyArray[workerId] += requestLatency;
-            totalRequestsArray[workerId]++;
-          });
-        }
-        
+
         promises.push(promise);
 
         const elapsedTime = Date.now() - secondStart;
@@ -72,12 +62,12 @@ async function runTestStep(step, workers, shardCount, multipleRouters) {
 
       const delay = Date.now() - secondStart;
       if (delay < 1000)
-          await new Promise(resolve => setTimeout(resolve, delay))
+        await new Promise(resolve => setTimeout(resolve, delay))
 
       await Promise.all(promises);
 
     }
-  
+
     await client.close();
   });
 
@@ -99,7 +89,6 @@ async function runTestStep(step, workers, shardCount, multipleRouters) {
   });
 }
 
-
 async function clearDatabase() {
   const client = await MongoClient.connect(url);
   const db = client.db(dbName);
@@ -108,31 +97,27 @@ async function clearDatabase() {
   await client.close();
 }
 
-
 (async function main() {
   const workers = 3;
 
-  fs.truncate(csvFilePath, 0, (err) => { 
+  fs.truncate(csvFilePath, 0, (err) => {
     if (err && err.code !== 'ENOENT')
-      console.error('Error truncating file:', err); 
+      console.error('Error truncating file:', err);
   });
 
   let multipleRouters = false;
 
-  if (process.argv.length < 4) {
-    console.log("Please specify the shard & router count");
+  if (process.argv.length < 3) {
+    console.log("Please specify the shard");
     process.exit(-1);
   }
 
   const shardCount = parseInt(process.argv[2]);
 
-  if (process.argv[3] === "-r2")
-    multipleRouters = true;
-
-  console.log(`Running with ${shardCount} shards & multiple routers: ${multipleRouters}`);
+  console.log(`Running with ${shardCount} shards`);
 
   for (const step of steps) {
-    console.log('Clearning database...');
+    console.log('Clearing database...');
     await clearDatabase();
     await new Promise(resolve => setTimeout(resolve, 2000));
     console.log('Done');
@@ -140,7 +125,7 @@ async function clearDatabase() {
     console.log(`Running test for ${step} req/min with ${workers} workers...`);
 
     await runTestStep(step, workers, shardCount, multipleRouters);
-    
+
     console.log('-------------------------------------');
   }
 })();

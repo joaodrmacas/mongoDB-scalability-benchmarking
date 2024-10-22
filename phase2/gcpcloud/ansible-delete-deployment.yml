@@ -13,3 +13,4 @@
         - mongo-shard1.yaml
         - mongo-shard2.yaml
         - mongo-shard3.yaml
+        - mongo-test-client.yaml

@@ -7,9 +7,10 @@
 ###########  Web Servers   #############
 # This method creates as many identical instances as the "count" index value
 resource "google_compute_instance" "worker" {
-    count = 3
+    count = 5
     name = "worker${count.index+1}"
     machine_type = var.GCP_MACHINE_TYPE
+    allow_stopping_for_update = true  # Add this line
     zone = var.GCP_ZONE
 
     boot_disk {
@@ -37,6 +38,7 @@ resource "google_compute_instance" "worker" {
 resource "google_compute_instance" "master" {
     name = "master"
     machine_type = var.GCP_MACHINE_TYPE
+    allow_stopping_for_update = true  # Add this line
     zone = var.GCP_ZONE
 
     boot_disk {

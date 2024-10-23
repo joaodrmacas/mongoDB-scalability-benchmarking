@@ -4,7 +4,7 @@
 # ID of the project, find it in the GCP console when clicking 
 # on the project name (on the top dropdown)
 variable "GCP_PROJECT_ID" {
-    default = "agisit-2425-website-99970"
+    default = "esle-yee"
 }
 
 # A list of machine types is found at:
@@ -13,7 +13,7 @@ variable "GCP_PROJECT_ID" {
 # check the cost at: https://cloud.google.com/compute/pricing#machinetype
 # Minimum required is N1 type = "n1-standard-1, 1 vCPU, 3.75 GB RAM"
 variable "GCP_MACHINE_TYPE" {
-    default = "n1-standard-1"
+    default = "c2-standard-8"
 }
 
 # Regions list is found at:

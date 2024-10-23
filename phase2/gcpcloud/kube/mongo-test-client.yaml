@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: mongo-test-client
 spec:
-  replicas: 3  # Adjust the number of replicas as needed
+  replicas: 1  # Adjust the number of replicas as needed
   selector:
     matchLabels:
       app: mongo-test-client
@@ -12,6 +12,7 @@ spec:
       labels:
         app: mongo-test-client
     spec:
+      nodeName: worker5
       containers:
         - name: mongo-test-client
           image: joaomacas02/mongo-test-client

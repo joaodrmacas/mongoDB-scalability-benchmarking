@@ -13,6 +13,7 @@ spec:
       labels:
         app: mongo-shard2
     spec:
+      nodeName: worker3
       containers:
         - name: mongo
           image: mongo:6.0

@@ -13,6 +13,7 @@ spec:
       labels:
         app: mongo-cfg
     spec:
+      nodeName: worker1
       containers:
         - name: mongo
           image: mongo:6.0

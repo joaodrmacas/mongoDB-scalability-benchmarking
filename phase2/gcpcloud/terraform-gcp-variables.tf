@@ -13,7 +13,7 @@ variable "GCP_PROJECT_ID" {
 # check the cost at: https://cloud.google.com/compute/pricing#machinetype
 # Minimum required is N1 type = "n1-standard-1, 1 vCPU, 3.75 GB RAM"
 variable "GCP_MACHINE_TYPE" {
-    default = "c2-standard-8"
+    default = "c2-standard-4"
 }
 
 # Regions list is found at:
@@ -23,6 +23,19 @@ variable "GCP_MACHINE_TYPE" {
 variable "GCP_ZONE" {
     default = "europe-west4-b"
 }
+
+variable "GCP_ZONE2" {
+    default = "europe-west3-a"
+}
+
+variable "GCP_ZONE3" {
+    default = "europe-west2-a"
+}
+
+variable "GCP_ZONE4" {
+    default = "europe-west1-c"
+}
+
 
 # Minimum required
 variable "DISK_SIZE" {

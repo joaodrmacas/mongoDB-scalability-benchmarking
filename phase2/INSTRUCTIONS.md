@@ -11,7 +11,7 @@ vagrant up
 Inside the VM, navigate to the project directory:
 
 ```bash
-cd proj/gcphosts
+cd proj/gcpcloud
 ```
 
 ### 1. Initialize Terraform

@@ -23,9 +23,13 @@ sudo kubectl exec -it "$MONGO_SHARD2_POD" -- mongosh --eval 'rs.initiate({ _id: 
 echo "Configuring shard 3..."
 sudo kubectl exec -it "$MONGO_SHARD3_POD" -- mongosh --eval 'rs.initiate({ _id: "shard3ReplSet", members: [{ _id: 0, host: "mongo-shard3-0.mongo-shard3:27017" }] })'
 
+sleep 2
+
 # Configure the topology
 echo "Configuring the topology..."
 sudo kubectl exec -it "$MONGO_MONGOS_POD" -- mongosh --eval 'sh.addShard("shard1ReplSet/mongo-shard1-0.mongo-shard1:27017"); sh.addShard("shard2ReplSet/mongo-shard2-0.mongo-shard2:27017"); sh.addShard("shard3ReplSet/mongo-shard3-0.mongo-shard3:27017");'
+
+sleep 2
 
 # Configure the db & sharding
 echo "Setting up the database and sharding..."

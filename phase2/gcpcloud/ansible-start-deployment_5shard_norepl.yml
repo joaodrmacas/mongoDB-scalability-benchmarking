@@ -21,16 +21,18 @@
         dest: /home/ubuntu/{{ item }}  # Specify the destination path on the master
       loop:
         - mongo-cfg.yaml
-        - mongo-mongos.yaml
         - mongo-services.yaml
         - mongo-shard1.yaml
         - mongo-shard2.yaml
         - mongo-shard3.yaml
+        - mongo-shard4.yaml
+        - mongo-shard5.yaml
+        - mongo-mongos.yaml
         - mongo-test-client.yaml
 
     - name: Copy the topology script to the master
       copy:
-        src: ./configure_topology.sh  # Adjust this path to where the script is located on your control node
+        src: ./scripts/configure_topology_5shard_norepl.sh  # Adjust this path to where the script is located on your control node
         dest: /home/ubuntu/configure_topology.sh  # Destination path on the master
         mode: '0755'  # Make it executable
 
@@ -42,10 +44,23 @@
         - mongo-shard1.yaml
         - mongo-shard2.yaml
         - mongo-shard3.yaml
+        - mongo-shard4.yaml
+        - mongo-shard5.yaml
         - mongo-mongos.yaml
         - mongo-test-client.yaml
 
+    - name: Scale mongos router
+      command: kubectl scale deployment mongo-mongos --replicas=2
+
+    - name: Wait for router to be ready
+      command: kubectl rollout status deployment/mongo-mongos
+
     - name: Run the setup script
-      command: ./configure_topology.sh
+      command: sudo ./configure_topology.sh
+      args:
+        chdir: /home/ubuntu  # Change to the directory where the script is located before running
+
+    - name: Run twice for safety script
+      command: sudo ./configure_topology.sh
       args:
         chdir: /home/ubuntu  # Change to the directory where the script is located before running

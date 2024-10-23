@@ -14,3 +14,6 @@
         - mongo-shard2.yaml
         - mongo-shard3.yaml
         - mongo-test-client.yaml
+        - mongo-shard4.yaml
+        - mongo-shard5.yaml
+      ignore_errors: yes  # This will ignore errors if the file doesn't exist

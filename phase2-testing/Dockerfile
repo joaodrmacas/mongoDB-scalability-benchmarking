@@ -2,8 +2,8 @@ FROM node:18
 
 WORKDIR /app
 
-# copy file FIXME
+COPY client.js .
 
 RUN npm init -y && npm install mongodb async
 
-CMD ["node", "server.js"]
+CMD ["node", "client.js"]

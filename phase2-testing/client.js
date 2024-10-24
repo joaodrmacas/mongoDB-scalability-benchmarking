@@ -5,30 +5,15 @@ const { MongoClient } = require('mongodb');
 const async = require('async');
 const fs = require('fs');
 
-const url = 'mongodb://mongo-mongos:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.1';
+const dbName = 'test_db';
+const collName = 'coll';
+const url = 'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.2';
 const csvFilePath = 'results.csv';
 
+const totalDuration = 20 * 1000;
 const reqPerMin = 250000;
 
-if (cluster.isMaster) {
-    fs.truncate(csvFilePath, 0, (err) => {
-        if (err && err.code !== 'ENOENT')
-            console.error('Error truncating file:', err);
-    });
-    
-    // 1 process per cpu core
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
-    }
-
-    cluster.on('exit', (worker, code, signal) => {
-        console.log(`Worker ${worker.process.pid} died`);
-    });
-} else {
-    await workerFunc();
-}
-
-async function workerFunc(reqPerMin, step, workers, shardCount) {
+async function workerFunc(shardCount) {
     const requestsPerSecond = reqPerMin / 60;
   
     const client = await MongoClient.connect(url);
@@ -92,3 +77,23 @@ async function workerFunc(reqPerMin, step, workers, shardCount) {
       }
     });
 }
+
+(async function main() {
+    if (cluster.isMaster) {
+        fs.truncate(csvFilePath, 0, (err) => {
+            if (err && err.code !== 'ENOENT')
+                console.error('Error truncating file:', err);
+        });
+        
+        // 1 process per cpu core
+        for (let i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
+    
+        cluster.on('exit', (worker, code, signal) => {
+            console.log(`Worker ${worker.process.pid} died`);
+        });
+    } else {
+        await workerFunc(1);
+    }
+})();

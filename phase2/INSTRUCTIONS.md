@@ -42,6 +42,8 @@ terraform apply
 Run a script to update Terraform output values.
 ```bash
 sudo ./update_tf_output.sh
+
+export ANSIBLE_HOST_KEY_CHECKING=False
 ```
 
 ### 6. Configure GCP Nodes

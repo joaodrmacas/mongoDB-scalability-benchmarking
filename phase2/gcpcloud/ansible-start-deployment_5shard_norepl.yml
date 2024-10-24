@@ -28,6 +28,7 @@
         - mongo-shard4.yaml
         - mongo-shard5.yaml
         - mongo-mongos.yaml
+        - mongo-mongos2.yaml
         - mongo-test-client.yaml
 
     - name: Copy the topology script to the master
@@ -47,13 +48,9 @@
         - mongo-shard4.yaml
         - mongo-shard5.yaml
         - mongo-mongos.yaml
+        - mongo-mongos2.yaml
         - mongo-test-client.yaml
-
-    - name: Scale mongos router
-      command: kubectl scale deployment mongo-mongos --replicas=2
-
-    - name: Wait for router to be ready
-      command: kubectl rollout status deployment/mongo-mongos
+        
 
     - name: Run the setup script
       command: sudo ./configure_topology.sh

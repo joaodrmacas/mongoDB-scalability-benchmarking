@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-mongos
+  name: mongo-mongos2
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo-mongos
+      app: mongo-mongos2
   template:
     metadata:
       labels:
-        app: mongo-mongos
+        app: mongo-mongos2
         service: mongo-mongos  # Add this line
     spec:
-      nodeName: worker1
+      nodeName: worker2
       containers:
         - name: mongos
           image: mongo:6.0

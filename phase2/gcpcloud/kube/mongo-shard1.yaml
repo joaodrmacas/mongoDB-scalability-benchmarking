@@ -17,7 +17,7 @@ spec:
       containers:
         - name: mongo
           image: mongo:6.0
-          command: ["mongod", "--replSet", "shard1ReplSet", "--shardsvr", "--port", "27017", "--bind_ip_all"]
+          command: ["mongod", "--replSet", "shard1ReplSet", "--shardsvr", "--port", "27017", "--bind_ip_all", "--journal"]
           volumeMounts:
             - name: shard1-storage
               mountPath: /data/db  # Mounting the volume at the specified path

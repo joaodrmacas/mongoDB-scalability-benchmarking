@@ -80,6 +80,14 @@ async function workerFunc() {
     });
 }
 
+async function clearDatabase() {
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+    const collection = db.collection(collName);
+    await collection.deleteMany({});
+    await client.close();
+}
+
 (async function main() {
     if (cluster.isMaster) {
 
@@ -87,6 +95,9 @@ async function workerFunc() {
             console.log("Usage: node client.js shardCount reqPerMin");
             process.exit(-1);
         }
+
+        clearDatabase();
+        console.log("Database cleared!");
 
         const SHARD_COUNT = process.argv[2];
         const REQ_PER_MIN = process.argv[3];

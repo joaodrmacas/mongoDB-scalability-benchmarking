@@ -1,0 +1,63 @@
+---
+- hosts: workers  # Adjust this to match your worker node group in the inventory
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Create /data/db directory
+      file:
+        path: /data/db
+        state: directory
+        mode: '0755'  # Set permissions as needed
+
+- hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Copy Kubernetes YAML files to master
+      copy:
+        src: ./kube/{{ item }}
+        dest: /home/ubuntu/{{ item }}  # Specify the destination path on the master
+      loop:
+        - mongo-cfg.yaml
+        - mongo-services.yaml
+        - mongo-shard1.yaml
+        - mongo-shard2.yaml
+        - mongo-shard3.yaml
+        - mongo-shard4.yaml
+        - mongo-shard5.yaml
+        - mongo-mongos.yaml
+        - mongo-mongos2.yaml
+        - mongo-test-client.yaml
+
+    - name: Copy the topology script to the master
+      copy:
+        src: ./scripts/configure_topology_5shard_norepl.sh  # Adjust this path to where the script is located on your control node
+        dest: /home/ubuntu/configure_topology.sh  # Destination path on the master
+        mode: '0755'  # Make it executable
+
+    - name: Apply Kubernetes configurations
+      command: kubectl apply -f /home/ubuntu/{{ item }}  # Updated to the correct destination path
+      loop:
+        - mongo-cfg.yaml
+        - mongo-services.yaml
+        - mongo-shard1.yaml
+        - mongo-shard2.yaml
+        - mongo-shard3.yaml
+        - mongo-shard4.yaml
+        - mongo-shard5.yaml
+        - mongo-mongos.yaml
+        - mongo-mongos2.yaml
+        - mongo-test-client.yaml
+        
+
+    - name: Run the setup script
+      command: sudo ./configure_topology.sh 500
+      args:
+        chdir: /home/ubuntu  # Change to the directory where the script is located before running
+
+    - name: Run twice for safety script
+      command: sudo ./configure_topology.sh 500
+      args:
+        chdir: /home/ubuntu  # Change to the directory where the script is located before running

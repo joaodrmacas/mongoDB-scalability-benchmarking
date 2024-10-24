@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Check if the argument for journalCommitInterval is provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <journalCommitInterval>"
+    exit 1
+fi
+
+# Get the journal commit interval from the argument
+JOURNAL_COMMIT_INTERVAL=$1
+
+
 # Get the names of the pods
 MONGO_CFG_POD=$(sudo kubectl get pods -l app=mongo-cfg -o jsonpath='{.items[0].metadata.name}')
 MONGO_MONGOS_POD=$(sudo kubectl get pods -l app=mongo-mongos -o jsonpath='{.items[0].metadata.name}')
@@ -60,5 +70,10 @@ db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: MinKey() 
 db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 1 }, max: { workerId: 2 }, zone: "zone2"});
 db.adminCommand({ updateZoneKeyRange: "test_db.coll", min: { workerId: 2 }, max: { workerId: MaxKey() }, zone: "zone3"});
 '
+
+echo "Setting journalCommitInterval to $JOURNAL_COMMIT_INTERVAL on all shards and config server..."
+for POD in "$MONGO_CFG_POD" "$MONGO_SHARD1_POD" "$MONGO_SHARD2_POD" "$MONGO_SHARD3_POD"; do
+    sudo kubectl exec -it "$POD" -- mongosh --eval "db.adminCommand({ setParameter: 1, journalCommitInterval: $JOURNAL_COMMIT_INTERVAL });"
+done
 
 echo "Setup completed."

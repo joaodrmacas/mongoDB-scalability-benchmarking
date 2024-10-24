@@ -1,0 +1,43 @@
+---
+- hosts: master
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Create results directory if not exists
+      file:
+        path: results
+        state: directory
+
+    - name: Get the mongo-test-client pod name
+      command: sudo kubectl get pods --selector=app=mongo-test-client -o jsonpath='{.items[0].metadata.name}'
+      register: mongo_client_pod
+
+    - name: Copy results_read.csv from mongo-test-client pod
+      shell: >
+        sudo kubectl cp {{ mongo_client_pod.stdout }}:/app/results_read.csv results/results_read_{{ ansible_date_time.epoch }}.csv ||
+        echo "File not found"
+      register: read_result_copy
+      ignore_errors: yes  # This will ignore errors if the file doesn't exist
+
+    - name: Copy results_write.csv from mongo-test-client pod
+      shell: >
+        sudo kubectl cp {{ mongo_client_pod.stdout }}:/app/results_write.csv results/results_write_{{ ansible_date_time.epoch }}.csv ||
+        echo "File not found"
+      register: write_result_copy
+      ignore_errors: yes  # This will ignore errors if the file doesn't exist
+
+    - name: Fetch results_read.csv to local machine
+      fetch:
+        src: results/results_read_{{ ansible_date_time.epoch }}.csv
+        dest: ./results/                # Adjust this path to your local machine path
+        flat: yes                       # Prevents directory structure in the destination
+      ignore_errors: yes  # This will ignore errors if the file doesn't exist
+
+    - name: Fetch results_write.csv to local machine
+      fetch:
+        src: results/results_write_{{ ansible_date_time.epoch }}.csv
+        dest: ./results/                # Adjust this path to your local machine path
+        flat: yes                       # Prevents directory structure in the destination
+      ignore_errors: yes  # This will ignore errors if the file doesn't exist
+

@@ -13,10 +13,10 @@ resource "google_compute_instance" "worker" {
     zone = lookup(
         {
             0 = var.GCP_ZONE
-            1 = var.GCP_ZONE4
-            2 = var.GCP_ZONE2
-            3 = var.GCP_ZONE3
-            4 = var.GCP_ZONE4
+            1 = var.GCP_ZONE
+            2 = var.GCP_ZONE
+            3 = var.GCP_ZONE
+            4 = var.GCP_ZONE
         },
         count.index,
         var.GCP_ZONE

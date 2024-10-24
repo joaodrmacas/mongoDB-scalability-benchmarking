@@ -65,9 +65,10 @@ async function workerFunc(shardCount) {
     const totalTime = (Date.now() - startTime) / 1000;
     const avgLatency = totalReqCount > 0 ? totalReqLatency / totalReqCount : 0;
     const actualReqMin = (totalReqCount / totalTime) * 60;
-  
-    console.log(`Step ${reqPerMin}: ${totalReqCount} requests made in ${totalTime.toFixed(2)} seconds.`);
-    console.log(`Actual req/min: ${actualReqMin.toFixed(2)}, Avg latency: ${avgLatency.toFixed(2)} ms`);
+    
+    console.log(`Target req/min: ${reqPerMin}, acutal req/min: ${actualReqMin.toFixed(2)}`)
+    console.log(`${totalReqCount} requests made in ${totalTime.toFixed(2)} seconds.`);
+    console.log(`Avg latency: ${avgLatency.toFixed(2)} ms`);
   
     const csvLine = `${actualReqMin.toFixed(2)},${avgLatency.toFixed(2)}\n`;
   

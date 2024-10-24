@@ -92,11 +92,6 @@ async function workerFunc() {
         const SHARD_COUNT = process.argv[2];
         const REQ_PER_MIN = process.argv[3];
 
-        fs.truncate(csvFilePath, 0, (err) => {
-            if (err && err.code !== 'ENOENT')
-                console.error('Error truncating file:', err);
-        });
-
         // 1 process per cpu core
         for (let i = 0; i < numCPUs; i++) {
             cluster.fork({ SHARD_COUNT, REQ_PER_MIN });

@@ -13,8 +13,9 @@ const csvFilePath = 'results_write.csv';
 const totalDuration = 20 * 1000;
 const reqPerMin = 250000;
 
-async function workerFunc(shardCount) {
-    const requestsPerSecond = reqPerMin / 60;
+async function workerFunc() {
+    const REQUESTS_PER_SECOND = parseInt(process.env.REQ_PER_MIN) / 60;
+    const SHARD_COUNT = parseInt(process.env.SHARD_COUNT);
 
     const client = await MongoClient.connect(url);
     const db = client.db(dbName);
@@ -33,10 +34,10 @@ async function workerFunc(shardCount) {
 
         const secondStart = Date.now();
 
-        for (let i = 0; i < requestsPerSecond; i++) {
+        for (let i = 0; i < REQUESTS_PER_SECOND; i++) {
             const requestStart = Date.now();
 
-            shardSelector %= shardCount;
+            shardSelector %= SHARD_COUNT;
 
             const promise = collection.insertOne({ workerId: shardSelector++, data: `random data ${Math.random()}` })
                 .then(() => {
@@ -48,7 +49,7 @@ async function workerFunc(shardCount) {
             promises.push(promise);
 
             const elapsedTime = Date.now() - secondStart;
-            const nextRequestTime = (i + 1) * (1000 / requestsPerSecond);
+            const nextRequestTime = (i + 1) * (1000 / REQUESTS_PER_SECOND);
 
             if (elapsedTime < nextRequestTime) {
                 const delay = nextRequestTime - elapsedTime;
@@ -66,7 +67,7 @@ async function workerFunc(shardCount) {
     const avgLatency = totalReqCount > 0 ? totalReqLatency / totalReqCount : 0;
     const actualReqMin = (totalReqCount / totalTime) * 60;
 
-    console.log(`Target req/min: ${reqPerMin}, acutal req/min: ${actualReqMin.toFixed(2)}`)
+    console.log(`Target req/min: ${REQUESTS_PER_SECOND * 60}, acutal req/min: ${actualReqMin.toFixed(2)}`)
     console.log(`${totalReqCount} requests made in ${totalTime.toFixed(2)} seconds.`);
     console.log(`Avg latency: ${avgLatency.toFixed(2)} ms`);
 
@@ -81,6 +82,15 @@ async function workerFunc(shardCount) {
 
 (async function main() {
     if (cluster.isMaster) {
+
+        if (process.argv.length < 4) {
+            console.log("Usage: node client.js shardCount reqPerMin");
+            process.exit(-1);
+        }
+
+        const SHARD_COUNT = process.argv[2];
+        const REQ_PER_MIN = process.argv[3];
+
         fs.truncate(csvFilePath, 0, (err) => {
             if (err && err.code !== 'ENOENT')
                 console.error('Error truncating file:', err);
@@ -88,7 +98,7 @@ async function workerFunc(shardCount) {
 
         // 1 process per cpu core
         for (let i = 0; i < numCPUs; i++) {
-            cluster.fork();
+            cluster.fork({ SHARD_COUNT, REQ_PER_MIN });
         }
 
         cluster.on('exit', (worker, code, signal) => {

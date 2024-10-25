@@ -15,14 +15,14 @@
 
     - name: Copy results_read.csv from mongo-test-client pod
       shell: >
-        sudo kubectl cp {{ mongo_client_pod.stdout }}:/app/results_read.csv results/results_read_{{ ansible_date_time.epoch }}.csv ||
+        sudo kubectl cp {{ mongo_client_pod.stdout }}:/app/results_read.csv ../results/results_read_{{ ansible_date_time.epoch }}.csv ||
         echo "File not found"
       register: read_result_copy
       ignore_errors: yes  # This will ignore errors if the file doesn't exist
 
     - name: Copy results_write.csv from mongo-test-client pod
       shell: >
-        sudo kubectl cp {{ mongo_client_pod.stdout }}:/app/results_write.csv results/results_write_{{ ansible_date_time.epoch }}.csv ||
+        sudo kubectl cp {{ mongo_client_pod.stdout }}:/app/results_write.csv ../results/results_write_{{ ansible_date_time.epoch }}.csv ||
         echo "File not found"
       register: write_result_copy
       ignore_errors: yes  # This will ignore errors if the file doesn't exist

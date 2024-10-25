@@ -12,10 +12,10 @@ resource "google_compute_instance" "worker" {
     zone = lookup(
         {
             0 = var.GCP_ZONE
-            1 = var.GCP_ZONE2
-            2 = var.GCP_ZONE3
-            3 = var.GCP_ZONE5
-            4 = var.GCP_ZONE4
+            1 = var.GCP_ZONE
+            2 = var.GCP_ZONE
+            3 = var.GCP_ZONE
+            4 = var.GCP_ZONE
         },
         count.index,
         var.GCP_ZONE
@@ -48,7 +48,7 @@ resource "google_compute_instance" "master" {
     name = "master"
     machine_type = var.GCP_MACHINE_TYPE
     allow_stopping_for_update = true  # Add this line
-    zone = var.GCP_ZONE3
+    zone = var.GCP_ZONE
 
     boot_disk {
         initialize_params {

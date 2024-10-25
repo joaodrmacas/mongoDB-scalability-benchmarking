@@ -30,8 +30,8 @@ def calculate_mean_from_csv(folder_path):
     # Group by the index to calculate the mean for each row across all files
     mean_df = concatenated_df.groupby(concatenated_df.index).mean()
 
-    # Round the mean values to 3 decimal places
-    mean_df = mean_df.round(3)
+    # Round the mean values to 2 decimal places
+    mean_df = mean_df.round(2)
 
     # Save the result to a new CSV file inside the specified folder
     mean_df.to_csv(output_file, index=False, header=False)

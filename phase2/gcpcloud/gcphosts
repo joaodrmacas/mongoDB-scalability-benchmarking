@@ -3,12 +3,12 @@
 
 # Modify the line with the ansible_host for the public IP address of your Tenant
 # For that, un-comment the following line before running instances configuration
-master         ansible_host=34.154.74.173 ansible_user=ubuntu ansible_connection=ssh
-worker1        ansible_host=34.65.187.110 ansible_user=ubuntu ansible_connection=ssh
-worker2        ansible_host=34.163.167.210 ansible_user=ubuntu ansible_connection=ssh
-worker3        ansible_host=34.154.121.173 ansible_user=ubuntu ansible_connection=ssh
-worker4        ansible_host=34.17.94.124 ansible_user=ubuntu ansible_connection=ssh
-worker5        ansible_host=34.32.31.21 ansible_user=ubuntu ansible_connection=ssh
+master         ansible_host=34.77.131.22 ansible_user=ubuntu ansible_connection=ssh
+worker1        ansible_host=35.240.35.170 ansible_user=ubuntu ansible_connection=ssh
+worker2        ansible_host=34.22.173.195 ansible_user=ubuntu ansible_connection=ssh
+worker3        ansible_host=34.22.240.141 ansible_user=ubuntu ansible_connection=ssh
+worker4        ansible_host=35.241.221.129 ansible_user=ubuntu ansible_connection=ssh
+worker5        ansible_host=35.240.17.248 ansible_user=ubuntu ansible_connection=ssh
 
 
 # The local deployment host VM

@@ -69,11 +69,7 @@ async function workerFunc() {
 
     const csvLine = `${actualReqMin.toFixed(2)},${avgLatency.toFixed(2)}\n`;
 
-    fs.appendFile(csvFilePath, csvLine, (err) => {
-        if (err) {
-            console.error('Error writing to CSV file:', err);
-        }
-    });
+    await fs.appendFile(csvFilePath, csvLine);
 
     console.log(`Target req/min: ${REQUESTS_PER_SECOND * 60}, acutal req/min: ${actualReqMin.toFixed(2)}`)
     console.log(`${totalReqCount} requests made in ${totalTime.toFixed(2)} seconds.`);

@@ -1,4 +1,3 @@
-
 # Elemets of the cloud such as virtual servers,
 # networks, firewall rules are created as resources
 # syntax is: resource RESOURCE_TYPE RESOURCE_NAME
@@ -13,10 +12,10 @@ resource "google_compute_instance" "worker" {
     zone = lookup(
         {
             0 = var.GCP_ZONE
-            1 = var.GCP_ZONE
-            2 = var.GCP_ZONE
-            3 = var.GCP_ZONE
-            4 = var.GCP_ZONE
+            1 = var.GCP_ZONE2
+            2 = var.GCP_ZONE3
+            3 = var.GCP_ZONE5
+            4 = var.GCP_ZONE4
         },
         count.index,
         var.GCP_ZONE
@@ -25,6 +24,7 @@ resource "google_compute_instance" "worker" {
     boot_disk {
         initialize_params {
             image = "ubuntu-2004-focal-v20240830"
+            size = var.DISK_SIZE
         }
     }
 
@@ -48,7 +48,7 @@ resource "google_compute_instance" "master" {
     name = "master"
     machine_type = var.GCP_MACHINE_TYPE
     allow_stopping_for_update = true  # Add this line
-    zone = var.GCP_ZONE
+    zone = var.GCP_ZONE3
 
     boot_disk {
         initialize_params {
@@ -70,4 +70,3 @@ resource "google_compute_instance" "master" {
 
   tags = ["master"]
 }
-

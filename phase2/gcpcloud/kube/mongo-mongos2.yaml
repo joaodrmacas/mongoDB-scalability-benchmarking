@@ -6,12 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo-mongos2
+      app: mongo-mongos  # Change this to match the service selector
   template:
     metadata:
       labels:
-        app: mongo-mongos2
-        service: mongo-mongos  # Add this line
+        app: mongo-mongos  # Change this to match the service selector
     spec:
       nodeName: worker2
       containers:

@@ -1,4 +1,4 @@
-# How to define variables in terraform:
+ # How to define variables in terraform:
 # https://www.terraform.io/docs/configuration/variables.html
 
 # ID of the project, find it in the GCP console when clicking 
@@ -13,7 +13,7 @@ variable "GCP_PROJECT_ID" {
 # check the cost at: https://cloud.google.com/compute/pricing#machinetype
 # Minimum required is N1 type = "n1-standard-1, 1 vCPU, 3.75 GB RAM"
 variable "GCP_MACHINE_TYPE" {
-    default = "n1-standard-1"
+    default = "n2-standard-4"
 }
 
 # Regions list is found at:
@@ -21,27 +21,27 @@ variable "GCP_MACHINE_TYPE" {
 # For prices of your deployment check:
 # Compute Engine dashboard -> VM instances -> Zone
 variable "GCP_ZONE" {
-    default = "europe-west4-b"
+    default = "europe-west6-b"
 }
 
 variable "GCP_ZONE2" {
-    default = "europe-west3-a"
+    default = "europe-west9-a"
 }
 
 variable "GCP_ZONE3" {
-    default = "europe-west2-a"
+    default = "europe-west8-a"
 }
 
 variable "GCP_ZONE4" {
-    default = "europe-west1-c"
+    default = "europe-west10-b"
 }
 
 variable "GCP_ZONE5" {
-    default = "europe-west6-a"
+    default = "europe-west12-b"
 }
 
 
 # Minimum required
 variable "DISK_SIZE" {
-    default = "15"
+    default = "40"
 }

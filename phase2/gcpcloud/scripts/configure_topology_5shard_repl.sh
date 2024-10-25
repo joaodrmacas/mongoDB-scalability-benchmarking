@@ -10,7 +10,7 @@ JOURNAL_COMMIT_INTERVAL=$1
 # Get the names of the pods
 MONGO_CFG_POD=$(sudo kubectl get pods -l app=mongo-cfg -o jsonpath='{.items[0].metadata.name}')
 MONGO_MONGOS1_POD=$(sudo kubectl get pods -l app=mongo-mongos -o jsonpath='{.items[0].metadata.name}')
-MONGO_MONGOS2_POD=$(sudo kubectl get pods -l app=mongo-mongos2 -o jsonpath='{.items[0].metadata.name}')
+MONGO_MONGOS2_POD=$(sudo kubectl get pods -l app=mongo-mongos -o jsonpath='{.items[1].metadata.name}')
 MONGO_SHARD1_POD=$(sudo kubectl get pods -l app=mongo-shard1 -o jsonpath='{.items[0].metadata.name}')
 MONGO_SHARD2_POD=$(sudo kubectl get pods -l app=mongo-shard2 -o jsonpath='{.items[0].metadata.name}')
 MONGO_SHARD3_POD=$(sudo kubectl get pods -l app=mongo-shard3 -o jsonpath='{.items[0].metadata.name}')

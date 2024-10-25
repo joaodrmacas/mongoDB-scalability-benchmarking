@@ -67,10 +67,6 @@ async function workerFunc() {
     const avgLatency = totalReqCount > 0 ? totalReqLatency / totalReqCount : 0;
     const actualReqMin = (totalReqCount / totalTime) * 60;
 
-    console.log(`Target req/min: ${REQUESTS_PER_SECOND * 60}, acutal req/min: ${actualReqMin.toFixed(2)}`)
-    console.log(`${totalReqCount} requests made in ${totalTime.toFixed(2)} seconds.`);
-    console.log(`Avg latency: ${avgLatency.toFixed(2)} ms`);
-
     const csvLine = `${actualReqMin.toFixed(2)},${avgLatency.toFixed(2)}\n`;
 
     fs.appendFile(csvFilePath, csvLine, (err) => {
@@ -78,6 +74,10 @@ async function workerFunc() {
             console.error('Error writing to CSV file:', err);
         }
     });
+
+    console.log(`Target req/min: ${REQUESTS_PER_SECOND * 60}, acutal req/min: ${actualReqMin.toFixed(2)}`)
+    console.log(`${totalReqCount} requests made in ${totalTime.toFixed(2)} seconds.`);
+    console.log(`Avg latency: ${avgLatency.toFixed(2)} ms`);
 }
 
 

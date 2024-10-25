@@ -10,7 +10,7 @@ vagrant up
 ```
 **Initialize Terraform**
 ```bash
-cd /proj/gcpcloud
+cd /proj/gcpcloud/
 ```
 
 **Initialize Terraform**
@@ -26,6 +26,7 @@ ssh-keygen -t rsa -b 2048
 **Plan and Apply Deployment**
 ```bash
 terraform plan
+
 terraform apply
 ```
 

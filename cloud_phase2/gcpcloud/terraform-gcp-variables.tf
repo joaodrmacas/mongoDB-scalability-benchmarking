@@ -12,8 +12,12 @@ variable "GCP_PROJECT_ID" {
 # prices are defined per region, before choosing an instance
 # check the cost at: https://cloud.google.com/compute/pricing#machinetype
 # Minimum required is N1 type = "n1-standard-1, 1 vCPU, 3.75 GB RAM"
-variable "GCP_MACHINE_TYPE" {
+variable "MACHINE_N1" {
     default = "n1-standard-1"
+}
+
+variable "MACHINE_N2" {
+    default = "n2-standard-4"
 }
 
 # Regions list is found at:

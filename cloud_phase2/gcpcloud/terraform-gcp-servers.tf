@@ -7,14 +7,14 @@
 resource "google_compute_instance" "worker" {
     count = 5
     name = "worker${count.index+1}"
-    machine_type = var.GCP_MACHINE_TYPE
+    machine_type = count.index == 4 ? var.MACHINE_N1 : var.MACHINE_N2
     allow_stopping_for_update = true
     zone = lookup(
         {
-            0 = var.GCP_ZONE
-            1 = var.GCP_ZONE
-            2 = var.GCP_ZONE
-            3 = var.GCP_ZONE
+            0 = var.GCP_ZONE5
+            1 = var.GCP_ZONE4
+            2 = var.GCP_ZONE3
+            3 = var.GCP_ZONE2
             4 = var.GCP_ZONE
         },
         count.index,
@@ -46,7 +46,7 @@ resource "google_compute_instance" "worker" {
 ###########  Master   #############
 resource "google_compute_instance" "master" {
     name = "master"
-    machine_type = var.GCP_MACHINE_TYPE
+    machine_type = var.MACHINE_N2
     allow_stopping_for_update = true  # Add this line
     zone = var.GCP_ZONE
 
